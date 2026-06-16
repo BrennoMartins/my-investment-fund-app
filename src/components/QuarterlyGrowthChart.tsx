@@ -9,14 +9,10 @@ import {
   ReferenceLine,
   Cell,
 } from 'recharts';
+import type { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
+import type { TooltipProps as RechartsTooltipProps } from 'recharts';
 import { MONTHLY_RESULTM } from '../config/monthly-resultm';
 import { formatCurrencyWithDecimals, formatPercent } from '../lib/utils';
-
-interface TooltipProps {
-  active?: boolean;
-  payload?: Array<{ value: number; payload: { monthlyProfit: number } }>;
-  label?: string;
-}
 
 function getQuarterLabel(month: string): string {
   const [year, monthValue] = month.split('-');
@@ -46,13 +42,14 @@ export function QuarterlyGrowthChart() {
 
   const chartData = Array.from(quarterMap.values());
 
-  const renderTooltip = ({ active, payload, label }: TooltipProps) => {
+  const renderTooltip = ({ active, payload, label }: RechartsTooltipProps<ValueType, NameType>) => {
     if (!active || payload == null || payload.length === 0) {
       return null;
     }
 
     const data = payload[0];
-    if (data == null) {
+    const monthlyProfit = data?.payload?.monthlyProfit;
+    if (data == null || typeof data.value !== 'number' || typeof monthlyProfit !== 'number') {
       return null;
     }
 
@@ -67,10 +64,10 @@ export function QuarterlyGrowthChart() {
       >
         <p style={{ color: '#f9fafb', fontSize: 12, fontWeight: 600 }}>{label}</p>
         <p style={{ color: '#d1d5db', fontSize: 12 }}>
-          Crescimento: {formatPercent(Number(data.value))}
+          Crescimento: {formatPercent(data.value)}
         </p>
         <p style={{ color: '#d1d5db', fontSize: 12 }}>
-          Lucro acumulado: {formatCurrencyWithDecimals(data.payload.monthlyProfit, 0)}
+          Lucro acumulado: {formatCurrencyWithDecimals(monthlyProfit, 0)}
         </p>
       </div>
     );

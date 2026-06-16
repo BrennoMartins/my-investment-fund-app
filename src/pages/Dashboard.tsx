@@ -15,7 +15,6 @@ import { CountryAllocationChart } from '../components/CountryAllocationChart';
 import { CategoryAllocationChart } from '../components/CategoryAllocationChart';
 import { MONTHLY_RESULTM } from '../config/monthly-resultm';
 import {
-  formatCurrency,
   formatCurrencyWithDecimals,
   formatDateLabel,
   formatPercent,
