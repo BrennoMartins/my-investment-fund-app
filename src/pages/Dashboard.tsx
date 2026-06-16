@@ -8,6 +8,8 @@ import { PortfolioEvolutionChart } from '../components/PortfolioEvolutionChart';
 import { AllocationPieChart } from '../components/AllocationPieChart';
 import { AssetTable } from '../components/AssetTable';
 import { MonthlyProfitChart } from '../components/MonthlyProfitChart';
+import { MonthlyResultTable } from '../components/MonthlyResultTable';
+import { QuarterlyGrowthChart } from '../components/QuarterlyGrowthChart';
 import { DividendChart } from '../components/DividendChart';
 import { CountryAllocationChart } from '../components/CountryAllocationChart';
 import { CategoryAllocationChart } from '../components/CategoryAllocationChart';
@@ -158,12 +160,12 @@ export function Dashboard() {
 
         {/* Three donut charts side by side */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <AllocationPieChart
+          <CountryAllocationChart
             assets={filteredAssets}
             activeFilter={activeFilter}
             onFilterChange={setActiveFilter}
           />
-          <CountryAllocationChart
+          <AllocationPieChart
             assets={filteredAssets}
             activeFilter={activeFilter}
             onFilterChange={setActiveFilter}
@@ -180,6 +182,11 @@ export function Dashboard() {
 
         {/* Dividends */}
         <DividendChart />
+
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
+          <MonthlyResultTable />
+          <QuarterlyGrowthChart />
+        </div>
 
         {/* Asset Table */}
         <AssetTable assets={filteredAssets} />
