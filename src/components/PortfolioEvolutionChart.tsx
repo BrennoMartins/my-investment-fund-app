@@ -8,7 +8,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { AssetHistory } from '../types';
-import { getTotalValueByDate, formatCurrency } from '../lib/utils';
+import { getTotalValueByDate, formatCurrencyWithDecimals } from '../lib/utils';
 
 interface Props {
   data: AssetHistory[];
@@ -49,7 +49,7 @@ export function PortfolioEvolutionChart({ data }: Props) {
               borderRadius: 8,
             }}
             labelStyle={{ color: '#f9fafb' }}
-            formatter={(value) => [formatCurrency(Number(value)), 'Patrimônio']}
+            formatter={(value) => [formatCurrencyWithDecimals(Number(value), 0), 'Patrimônio']}
           />
           <Area
             type="monotone"

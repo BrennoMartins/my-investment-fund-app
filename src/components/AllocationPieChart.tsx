@@ -1,6 +1,6 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { ActiveFilter, AssetHistory } from '../types';
-import { getAllocationByType, formatCurrency, formatPercent } from '../lib/utils';
+import { getAllocationByType, formatCurrencyWithDecimals, formatPercent } from '../lib/utils';
 
 const renderLabel = ({
   cx, cy, midAngle, innerRadius, outerRadius, percent,
@@ -86,7 +86,7 @@ export function AllocationPieChart({ assets, activeFilter, onFilterChange }: Pro
               borderRadius: 8,
             }}
             formatter={(value, name) => [
-              `${formatCurrency(Number(value))} (${formatPercent(Number(value) / total)})`,
+              `${formatCurrencyWithDecimals(Number(value), 0)} (${formatPercent(Number(value) / total, 0)})`,
               String(name),
             ]}
           />

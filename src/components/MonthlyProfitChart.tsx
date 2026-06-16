@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { AssetHistory } from '../types';
-import { getUniqueDates, getAssetsForDate, formatCurrency, formatDateLabel } from '../lib/utils';
+import { getUniqueDates, getAssetsForDate, formatCurrencyWithDecimals, formatDateLabel } from '../lib/utils';
 
 interface Props {
   data: AssetHistory[];
@@ -26,7 +26,7 @@ export function MonthlyProfitChart({ data }: Props) {
 
   return (
     <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-      <h2 className="text-base font-semibold text-white mb-4">Lucro Mensal Total</h2>
+      <h2 className="text-base font-semibold text-white mb-4">Lucro do Ativo</h2>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#374151" vertical={false} />
@@ -37,7 +37,7 @@ export function MonthlyProfitChart({ data }: Props) {
             tickLine={false}
           />
           <YAxis
-            tickFormatter={(value) => `R$ ${(Number(value) / 1000).toFixed(1)}k`}
+            tickFormatter={(value) => `R$ ${(Number(value) / 1000).toFixed(0)}k`}
             tick={{ fill: '#9ca3af', fontSize: 11 }}
             axisLine={false}
             tickLine={false}
@@ -50,7 +50,7 @@ export function MonthlyProfitChart({ data }: Props) {
               borderRadius: 8,
             }}
             labelStyle={{ color: '#f9fafb' }}
-            formatter={(value) => [formatCurrency(Number(value)), 'Lucro']}
+            formatter={(value) => [formatCurrencyWithDecimals(Number(value), 0), 'Lucro']}
           />
           <ReferenceLine y={0} stroke="#4b5563" />
           <Bar dataKey="profit" radius={[4, 4, 0, 0]}>

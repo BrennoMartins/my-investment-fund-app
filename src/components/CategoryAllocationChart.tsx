@@ -1,6 +1,6 @@
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import type { ActiveFilter, AssetHistory } from '../types';
-import { formatCurrency, formatPercent } from '../lib/utils';
+import { formatCurrencyWithDecimals, formatPercent } from '../lib/utils';
 
 const renderLabel = ({
   cx, cy, midAngle, innerRadius, outerRadius, percent,
@@ -84,7 +84,7 @@ export function CategoryAllocationChart({ assets, activeFilter, onFilterChange }
           <Tooltip
             contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: 8 }}
             formatter={(value, name) => [
-              `${formatCurrency(Number(value))} (${formatPercent(Number(value) / total)})`,
+              `${formatCurrencyWithDecimals(Number(value), 0)} (${formatPercent(Number(value) / total, 0)})`,
               String(name),
             ]}
           />
