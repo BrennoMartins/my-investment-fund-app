@@ -10,7 +10,7 @@ import {
   LabelList,
 } from 'recharts';
 import { DIVIDENDS } from '../config/dividends';
-import { formatCurrency, formatDateLabel } from '../lib/utils';
+import { formatCurrencyWithDecimals, formatDateLabel } from '../lib/utils';
 
 export function DividendChart() {
   const total = DIVIDENDS.reduce((sum, d) => sum + d.amount, 0);
@@ -31,11 +31,11 @@ export function DividendChart() {
         <div className="flex gap-6 text-right shrink-0">
           <div>
             <p className="text-xs text-gray-400">Total acumulado</p>
-            <p className="text-sm font-bold text-green-400">{formatCurrency(total)}</p>
+            <p className="text-sm font-bold text-green-400">{formatCurrencyWithDecimals(total, 0)}</p>
           </div>
           <div>
             <p className="text-xs text-gray-400">Média mensal</p>
-            <p className="text-sm font-bold text-blue-400">{formatCurrency(avg)}</p>
+            <p className="text-sm font-bold text-blue-400">{formatCurrencyWithDecimals(avg, 0)}</p>
           </div>
         </div>
       </div>
@@ -63,7 +63,7 @@ export function DividendChart() {
               borderRadius: 8,
             }}
             labelStyle={{ color: '#f9fafb' }}
-            formatter={(value) => [formatCurrency(Number(value)), 'Proventos']}
+            formatter={(value) => [formatCurrencyWithDecimals(Number(value), 0), 'Proventos']}
           />
           <ReferenceLine
             y={avg}
@@ -75,7 +75,7 @@ export function DividendChart() {
             <LabelList
               dataKey="amount"
               position="top"
-              formatter={(v: number) => formatCurrency(v)}
+              formatter={(v: number) => formatCurrencyWithDecimals(v, 0)}
               style={{ fill: '#d1fae5', fontSize: 11, fontWeight: 600 }}
             />
           </Bar>

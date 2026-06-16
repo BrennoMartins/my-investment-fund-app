@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 import type { AssetHistory } from '../types';
 import { formatCurrency, formatPercent } from '../lib/utils';
 
@@ -12,8 +14,94 @@ interface Props {
   assets: AssetHistory[];
 }
 
+type SortDirection = 'asc' | 'desc';
+type SortKey = 'asset' | 'type' | 'value' | 'totalCost' | 'returnRate' | 'monthlyProfitPercentage' | 'portfolioPercentage';
+
+const COLUMN_LABELS: Record<SortKey, string> = {
+  asset: 'Ativo',
+  type: 'Tipo',
+  value: 'Valor Atual',
+  totalCost: 'Custo Total',
+  returnRate: 'Retorno Total',
+  monthlyProfitPercentage: 'Lucro no Mês',
+  portfolioPercentage: '% Carteira',
+};
+
 export function AssetTable({ assets }: Props) {
-  const sorted = [...assets].sort((a, b) => b.value - a.value);
+  const [sortKey, setSortKey] = useState<SortKey>('value');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+
+  const handleSort = (nextSortKey: SortKey) => {
+    if (nextSortKey === sortKey) {
+      setSortDirection((currentDirection) => (currentDirection === 'asc' ? 'desc' : 'asc'));
+      return;
+    }
+
+    setSortKey(nextSortKey);
+    setSortDirection(nextSortKey === 'asset' || nextSortKey === 'type' ? 'asc' : 'desc');
+  };
+
+  const getSortValue = (asset: AssetHistory, key: SortKey): number | string => {
+    switch (key) {
+      case 'asset':
+        return asset.asset;
+      case 'type':
+        return asset.type;
+      case 'value':
+        return asset.value;
+      case 'totalCost':
+        return asset.averagePrice * asset.quantity;
+      case 'returnRate':
+        return asset.returnRate;
+      case 'monthlyProfitPercentage':
+        return asset.monthlyProfitPercentage ?? Number.NEGATIVE_INFINITY;
+      case 'portfolioPercentage':
+        return asset.portfolioPercentage;
+    }
+  };
+
+  const sorted = [...assets].sort((leftAsset, rightAsset) => {
+    const leftValue = getSortValue(leftAsset, sortKey);
+    const rightValue = getSortValue(rightAsset, sortKey);
+
+    if (typeof leftValue === 'string' && typeof rightValue === 'string') {
+      const comparison = leftValue.localeCompare(rightValue, 'pt-BR');
+      return sortDirection === 'asc' ? comparison : -comparison;
+    }
+
+    const comparison = Number(leftValue) - Number(rightValue);
+    return sortDirection === 'asc' ? comparison : -comparison;
+  });
+
+  const renderHeader = (key: SortKey, align: 'left' | 'right' = 'left') => {
+    const isActive = sortKey === key;
+    const alignmentClass = align === 'right' ? 'justify-end text-right w-full' : 'justify-start text-left';
+
+    const SortIcon = isActive
+      ? sortDirection === 'asc'
+        ? ArrowUp
+        : ArrowDown
+      : ArrowUpDown;
+
+    return (
+      <button
+        type="button"
+        onClick={() => handleSort(key)}
+        className={`group flex items-center gap-2 ${alignmentClass} hover:text-white transition-colors`}
+      >
+        <span>{COLUMN_LABELS[key]}</span>
+        <span
+          className={`inline-flex items-center justify-center rounded-md border p-1 transition-colors ${
+            isActive
+              ? 'border-blue-500/50 bg-blue-500/10 text-blue-400'
+              : 'border-gray-700 bg-gray-800 text-gray-500 group-hover:border-gray-600 group-hover:text-gray-300'
+          }`}
+        >
+          <SortIcon size={12} />
+        </span>
+      </button>
+    );
+  };
 
   return (
     <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
@@ -24,13 +112,13 @@ export function AssetTable({ assets }: Props) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-700">
-              <th className="text-left px-5 py-3 text-gray-400 font-medium whitespace-nowrap">Ativo</th>
-              <th className="text-left px-5 py-3 text-gray-400 font-medium whitespace-nowrap">Tipo</th>
-              <th className="text-right px-5 py-3 text-gray-400 font-medium whitespace-nowrap">Valor Atual</th>
-              <th className="text-right px-5 py-3 text-gray-400 font-medium whitespace-nowrap">Custo Total</th>
-              <th className="text-right px-5 py-3 text-gray-400 font-medium whitespace-nowrap">Retorno Total</th>
-              <th className="text-right px-5 py-3 text-gray-400 font-medium whitespace-nowrap">Lucro no Mês</th>
-              <th className="text-right px-5 py-3 text-gray-400 font-medium whitespace-nowrap">% Carteira</th>
+              <th className="text-left px-5 py-3 text-gray-400 font-medium whitespace-nowrap">{renderHeader('asset')}</th>
+              <th className="text-left px-5 py-3 text-gray-400 font-medium whitespace-nowrap">{renderHeader('type')}</th>
+              <th className="text-right px-5 py-3 text-gray-400 font-medium whitespace-nowrap">{renderHeader('value', 'right')}</th>
+              <th className="text-right px-5 py-3 text-gray-400 font-medium whitespace-nowrap">{renderHeader('totalCost', 'right')}</th>
+              <th className="text-right px-5 py-3 text-gray-400 font-medium whitespace-nowrap">{renderHeader('returnRate', 'right')}</th>
+              <th className="text-right px-5 py-3 text-gray-400 font-medium whitespace-nowrap">{renderHeader('monthlyProfitPercentage', 'right')}</th>
+              <th className="text-right px-5 py-3 text-gray-400 font-medium whitespace-nowrap">{renderHeader('portfolioPercentage', 'right')}</th>
             </tr>
           </thead>
           <tbody>

@@ -8,11 +8,15 @@ import { PortfolioEvolutionChart } from '../components/PortfolioEvolutionChart';
 import { AllocationPieChart } from '../components/AllocationPieChart';
 import { AssetTable } from '../components/AssetTable';
 import { MonthlyProfitChart } from '../components/MonthlyProfitChart';
+import { MonthlyResultTable } from '../components/MonthlyResultTable';
+import { QuarterlyGrowthChart } from '../components/QuarterlyGrowthChart';
 import { DividendChart } from '../components/DividendChart';
 import { CountryAllocationChart } from '../components/CountryAllocationChart';
 import { CategoryAllocationChart } from '../components/CategoryAllocationChart';
+import { MONTHLY_RESULTM } from '../config/monthly-resultm';
 import {
   formatCurrency,
+  formatCurrencyWithDecimals,
   formatDateLabel,
   formatPercent,
   getAssetsForDate,
@@ -62,11 +66,9 @@ export function Dashboard() {
     ? data.filter((a) => a[activeFilter.field] === activeFilter.value)
     : data;
 
-  const totalValue = filteredAssets.reduce((sum, a) => sum + a.value, 0);
-  const totalInvested = filteredAssets.reduce((sum, a) => sum + a.averagePrice * a.quantity, 0);
-  const totalReturn = totalValue - totalInvested;
-  const returnRate = totalInvested > 0 ? totalReturn / totalInvested : 0;
-  const monthlyProfit = filteredAssets.reduce((sum, a) => sum + (a.profit ?? 0), 0);
+  const latestMonthlyResult = MONTHLY_RESULTM[MONTHLY_RESULTM.length - 1];
+  const monthlyResultDateLabel =
+    latestMonthlyResult != null ? formatDateLabel(latestMonthlyResult.month) : 'Sem dados';
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -108,45 +110,62 @@ export function Dashboard() {
         )}
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <KPICard
-            title="Patrimônio Total"
-            value={formatCurrency(totalValue)}
-            subtitle={`${filteredAssets.length} ativos`}
-            icon={Wallet}
-          />
-          <KPICard
-            title="Total Investido"
-            value={formatCurrency(totalInvested)}
-            icon={BarChart2}
-          />
-          <KPICard
-            title="Retorno Total"
-            value={formatCurrency(totalReturn)}
-            subtitle={formatPercent(returnRate)}
-            icon={totalReturn >= 0 ? TrendingUp : TrendingDown}
-            valueColor={totalReturn >= 0 ? 'text-green-400' : 'text-red-400'}
-          />
-          <KPICard
-            title="Lucro no Mês"
-            value={formatCurrency(monthlyProfit)}
-            subtitle={formatDateLabel(latestDate)}
-            icon={monthlyProfit >= 0 ? TrendingUp : TrendingDown}
-            valueColor={monthlyProfit >= 0 ? 'text-green-400' : 'text-red-400'}
-          />
-        </div>
+        {latestMonthlyResult != null && (
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+            <KPICard
+              title="Aporte"
+              value={formatCurrencyWithDecimals(latestMonthlyResult.contribution, 0)}
+              subtitle={monthlyResultDateLabel}
+              icon={BarChart2}
+            />
+            <KPICard
+              title="Patrimônio"
+              value={formatCurrencyWithDecimals(latestMonthlyResult.wallet, 0)}
+              subtitle={monthlyResultDateLabel}
+              icon={Wallet}
+            />
+            <KPICard
+              title="Lucro Total"
+              value={formatCurrencyWithDecimals(latestMonthlyResult.profit, 0)}
+              subtitle={formatPercent(latestMonthlyResult.profitPercentage, 0)}
+              icon={latestMonthlyResult.profit >= 0 ? TrendingUp : TrendingDown}
+              valueColor={latestMonthlyResult.profit >= 0 ? 'text-green-400' : 'text-red-400'}
+            />
+            <KPICard
+              title="Lucro no Mês"
+              value={formatCurrencyWithDecimals(latestMonthlyResult.monthlyProfit, 0)}
+              subtitle={monthlyResultDateLabel}
+              icon={latestMonthlyResult.monthlyProfit >= 0 ? TrendingUp : TrendingDown}
+              valueColor={latestMonthlyResult.monthlyProfit >= 0 ? 'text-green-400' : 'text-red-400'}
+            />
+            <KPICard
+              title="Rentabilidade Total"
+              value={formatPercent(latestMonthlyResult.profitPercentage, 0)}
+              subtitle="Sobre o capital aportado"
+              icon={Activity}
+              valueColor={latestMonthlyResult.profitPercentage >= 0 ? 'text-green-400' : 'text-red-400'}
+            />
+            <KPICard
+              title="Crescimento Mensal"
+              value={formatPercent(latestMonthlyResult.growthPercentage)}
+              subtitle={monthlyResultDateLabel}
+              icon={latestMonthlyResult.growthPercentage >= 0 ? TrendingUp : TrendingDown}
+              valueColor={latestMonthlyResult.growthPercentage >= 0 ? 'text-green-400' : 'text-red-400'}
+            />
+          </div>
+        )}
 
         {/* Evolution chart full width */}
         <PortfolioEvolutionChart data={filteredData} />
 
         {/* Three donut charts side by side */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <AllocationPieChart
+          <CountryAllocationChart
             assets={filteredAssets}
             activeFilter={activeFilter}
             onFilterChange={setActiveFilter}
           />
-          <CountryAllocationChart
+          <AllocationPieChart
             assets={filteredAssets}
             activeFilter={activeFilter}
             onFilterChange={setActiveFilter}
@@ -163,6 +182,11 @@ export function Dashboard() {
 
         {/* Dividends */}
         <DividendChart />
+
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">
+          <MonthlyResultTable />
+          <QuarterlyGrowthChart />
+        </div>
 
         {/* Asset Table */}
         <AssetTable assets={filteredAssets} />
