@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell,
@@ -751,6 +752,12 @@ export function Stocks() {
       <header className="border-b border-gray-800 bg-gray-900/80 backdrop-blur sticky top-0 z-10">
         <div className="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
+            <Link
+              to="/"
+              className="text-sm text-gray-400 hover:text-white border border-gray-700 hover:border-gray-500 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              ← Dashboard
+            </Link>
             <div className="p-2 bg-emerald-600 rounded-lg">
               <TrendingUp size={20} />
             </div>

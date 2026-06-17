@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Activity, BarChart2, TrendingDown, TrendingUp, Wallet, X } from 'lucide-react';
 import { fetchAssetHistory } from '../services/api';
@@ -83,9 +84,17 @@ export function Dashboard() {
               <p className="text-xs text-gray-400">Análise de performance dos ativos</p>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-xs text-gray-400">Última atualização</p>
-            <p className="text-sm font-medium text-gray-200">{formatDateLabel(latestDate)}</p>
+          <div className="flex items-center gap-4">
+            <Link
+              to="/stocks"
+              className="text-sm text-gray-400 hover:text-white border border-gray-700 hover:border-gray-500 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              Bolsa →
+            </Link>
+            <div className="text-right">
+              <p className="text-xs text-gray-400">Última atualização</p>
+              <p className="text-sm font-medium text-gray-200">{formatDateLabel(latestDate)}</p>
+            </div>
           </div>
         </div>
       </header>
