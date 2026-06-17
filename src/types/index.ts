@@ -1,5 +1,21 @@
 export type ActiveFilter = { field: 'type' | 'country' | 'category'; value: string } | null;
 
+export interface StockEntry {
+  date: string;
+  ticker: string;
+  quote: number;
+  quantity: number;
+  totalValue: number;
+  avgPrice: number;
+  totalCost: number;
+  targetPct: number;
+  currentPct: number;
+  diffPct: number;
+  fixUnits: number;
+  profitPct: number;
+  profitValue: number;
+}
+
 export interface AssetHistory {
   id: number;
   date: string;
