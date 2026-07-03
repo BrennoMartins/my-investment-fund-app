@@ -11,4 +11,5 @@ export const DIVIDENDS: DividendEntry[] = [
   { date: '2026-03-31', amount: 592.50 },
   { date: '2026-04-30', amount: 716.40 },
   { date: '2026-05-31', amount: 626.26 },
+  { date: '2026-06-30', amount: 584.63 },  
 ];
