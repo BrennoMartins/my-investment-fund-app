@@ -49,7 +49,7 @@ export function getLatestStockDate(): string {
 
 /** Classify asset into category */
 export function getAssetCategory(ticker: string): 'FII' | 'ETF' | 'Ação' {
-  const etfs = ['BOVA11', 'SMAL11'];
+  const etfs = ['AUVP11', 'BOVA11', 'SMAL11'];
   const acoes11 = ['BPAC11'];
   if (etfs.includes(ticker)) return 'ETF';
   if (acoes11.includes(ticker)) return 'Ação';
