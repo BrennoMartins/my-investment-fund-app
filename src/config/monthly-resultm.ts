@@ -128,4 +128,13 @@ export const MONTHLY_RESULTM: MonthlyResultmEntry[] = [
 		monthlyProfit: 1215.0,
 		growthPercentage: 0.0067,
 	},
+	{
+		month: '2026-09-01',
+		contribution: 149592.0,
+		wallet: 192949.0,
+		profit: 43357.0,
+		profitPercentage: 0.2898,
+		monthlyProfit: 4912.0,
+		growthPercentage: 0.0261,
+	},
 ];
